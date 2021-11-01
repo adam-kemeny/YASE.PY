@@ -1,7 +1,30 @@
 import PySimpleGUI as gui
 import youtube_dl
-from constants import ICON, DESCRIPTION
+from constants import ICON, DESCRIPTION, TITLE
 gui.theme('BluePurple')
+
+ELEMENTS = {
+    'statusBar': 'statusBar',
+    'title': '1.text.Title',
+    'formInput': '1.form.Url',
+    'formSubmit': '1.button.Submit',
+    'reset': '1.button.Reset',
+    'formSelect': '2.form.List'
+}
+
+TRANSLATIONS = {
+    'title': 'Please enter Youtube URL',
+    'formInputTooltip': 'Insert the URL here',
+    'formSubmitText': 'OK',
+    'reset': 'Clear',
+    'loading': 'Fetching data...',
+    'error': 'ERROR'
+}
+
+FONT_STYLES = {
+    'default': 'Tahoma 11',
+    'highlight': 'Tahoma 11 italic'
+}
 
 
 class YASE_UI():
@@ -9,48 +32,79 @@ class YASE_UI():
         self.LIST_VALUES = ['OPUS', 'OGG VORBIS', 'AAC (M4A/MP4)']
         self.LAYOUT = [
             [
-                gui.Text('Please enter Youtube URL', key='1.text.Title')
+                gui.Text(
+                    text=TRANSLATIONS['title'],
+                    key=ELEMENTS['title']
+                )
             ],
             [
-                gui.InputText(key='1.form.Url',
-                              tooltip='Insert the URL here', enable_events=True)
+                gui.InputText(
+                    key=ELEMENTS['formInput'],
+                    tooltip=TRANSLATIONS['formInputTooltip'],
+                    enable_events=True
+                )
             ],
             [
-                gui.Button('OK', key='1.button.Submit',
-                           bind_return_key=True, disabled=True),
                 gui.Button(
-                    'Clear', key='1.button.Reset', disabled=True),
+                    button_text=TRANSLATIONS['formSubmitText'],
+                    key=ELEMENTS['formSubmit'],
+                    bind_return_key=True,
+                    disabled=True
+                ),
+                gui.Button(
+                    button_text=TRANSLATIONS['reset'],
+                    key=ELEMENTS['reset']
+                )
             ],
             [
-                gui.Combo(default_value=self.LIST_VALUES[0], values=self.LIST_VALUES, key='2.form.List',
-                          visible=False)
+                gui.Combo(
+                    default_value=self.LIST_VALUES[0],
+                    values=self.LIST_VALUES,
+                    key=ELEMENTS['formSelect'],
+                    visible=False
+                )
             ],
             [
-                gui.StatusBar(text=DESCRIPTION,
-                              key='statusBar',
-                              justification='right', expand_x='true',
-                              pad=(0, (100, 0)))
+                gui.StatusBar(
+                    text=DESCRIPTION,
+                    key=ELEMENTS['statusBar'],
+                    justification='right',
+                    expand_x='true',
+                    pad=(0, (100, 0)))
             ]
         ]
 
     class updateUI():
         def submit(self):
-            self.window['statusBar'].update(value='Fetching data...')
-            self.window['1.text.Title'].update(visible=False)
-            self.window['1.form.Url'].update(disabled=True)
-            self.window['1.button.Submit'].update(visible=False)
-            self.window['1.button.Reset'].update(visible=False)
-
-
+            self.window[ELEMENTS['statusBar']].update(
+                value=TRANSLATIONS['loading']
+            )
+            self.window[ELEMENTS['title']].update(
+                visible=False
+            )
+            self.window[ELEMENTS['formInput']].update(
+                disabled=True
+            )
+            self.window[ELEMENTS['formSubmit']].update(
+                visible=False
+            )
+            self.window[ELEMENTS['reset']].update(
+                visible=False
+            )
 
     def run(self):
-        self.window = gui.Window('YASE.PY', self.LAYOUT, finalize=True,
-                                 icon=ICON, right_click_menu=['', ['Paste']])
+        self.window = gui.Window(
+            title=TITLE,
+            layout=self.LAYOUT,
+            finalize=True,
+            icon=ICON,
+            right_click_menu=['', ['Paste']],
+            font=FONT_STYLES['default']
+        )
         while True:
             event, value = self.window.read()
 
-            if (event == '1.button.Submit' and value['1.form.Url']):
-                # YASE_UI Operations
+            if (event == ELEMENTS['formSubmit'] and value[ELEMENTS['formInput']]):
                 self.updateUI().submit
                 # youtube-dl data fetch
                 try:
@@ -59,22 +113,32 @@ class YASE_UI():
                         # 'format': '251',
                         'simulate': True,
                         'listformats': True,
-                    }).extract_info(value['1.form.Url'])
-                    self.window['2.form.List'].update(
-                        visible=True, values=self.LIST_VALUES)
-                    self.window['statusBar'].update(value=DESCRIPTION)
+                    }).extract_info(
+                        value[ELEMENTS['formInput']]
+                    )
+                    self.window[ELEMENTS['formSelect']].update(
+                        visible=True,
+                        values=self.LIST_VALUES
+                    )
+                    self.window[ELEMENTS['statusBar']].update(
+                        value=DESCRIPTION
+                    )
                 except:
-                    self.window['statusBar'].update(value='ERROR')
-                    self.window['1.button.Reset'].update(visible=True)
+                    self.window[ELEMENTS['statusBar']].update(
+                        value=TRANSLATIONS['error'],
+                        text_color='red',
+                        font=FONT_STYLES['highlight']
+                    )
+                    self.window[ELEMENTS['reset']].update(
+                        visible=True
+                    )
 
-            if value['1.form.Url']:
-                self.window['1.button.Submit'].update(disabled=False)
-                self.window['1.button.Reset'].update(disabled=False)
+            if value[ELEMENTS['formInput']]:
+                self.window[ELEMENTS['formSubmit']].update(disabled=False)
             else:
-                self.window['1.button.Submit'].update(disabled=True)
-                self.window['1.button.Reset'].update(disabled=True)
+                self.window[ELEMENTS['formSubmit']].update(disabled=True)
 
-            if event == '1.button.Reset':
+            if event == ELEMENTS['reset']:
                 self.window.close()
                 self.reset()
                 break
