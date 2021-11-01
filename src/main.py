@@ -1,6 +1,6 @@
 import PySimpleGUI as gui
 import youtube_dl
-from constants import ICON, DESCRIPTION, TITLE
+from constants import ICON, VERSION, TITLE
 gui.theme('BluePurple')
 
 ELEMENTS = {
@@ -66,11 +66,13 @@ class YASE_UI():
             ],
             [
                 gui.StatusBar(
-                    text=DESCRIPTION,
+                    text=VERSION,
                     key=ELEMENTS['statusBar'],
                     justification='right',
                     expand_x='true',
-                    pad=(0, (100, 0)))
+                    pad=(0, (100, 0)),
+                    text_color='white'
+                )
             ]
         ]
 
@@ -121,7 +123,7 @@ class YASE_UI():
                         values=self.LIST_VALUES
                     )
                     self.window[ELEMENTS['statusBar']].update(
-                        value=DESCRIPTION
+                        value=VERSION
                     )
                 except:
                     self.window[ELEMENTS['statusBar']].update(
