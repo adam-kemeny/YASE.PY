@@ -81,24 +81,6 @@ class YASE_UI():
             ]
         ]
 
-    class updateUI():
-        def submit(self):
-            self.window[ELEMENTS['statusBar']].update(
-                value=TRANSLATIONS['loading']
-            )
-            self.window[ELEMENTS['title']].update(
-                visible=False
-            )
-            self.window[ELEMENTS['formInput']].update(
-                disabled=True
-            )
-            self.window[ELEMENTS['formSubmit']].update(
-                visible=False
-            )
-            self.window[ELEMENTS['reset']].update(
-                visible=False
-            )
-
     def run(self):
         self.window = gui.Window(
             title=TITLE,
@@ -112,7 +94,19 @@ class YASE_UI():
             event, value = self.window.read()
 
             if (event == ELEMENTS['formSubmit'] and value[ELEMENTS['formInput']]):
-                self.updateUI().submit
+                # Update UI
+                self.window[ELEMENTS['statusBar']].update(
+                    value=TRANSLATIONS['loading']
+                )
+                self.window[ELEMENTS['title']].update(
+                    visible=False
+                )
+                self.window[ELEMENTS['formInput']].update(
+                    disabled=True
+                )
+                self.window[ELEMENTS['formSubmit']].update(
+                    visible=False
+                )
                 # youtube-dl data fetch
                 try:
                     result = youtube_dl.YoutubeDL({
