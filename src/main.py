@@ -26,10 +26,15 @@ FONT_STYLES = {
     'highlight': 'Tahoma 11 italic'
 }
 
+AUDIO_FORMATS = {
+    140: '.m4a (AAC)',
+    251: '.opus (OPUS)',
+    # 0: '.ogg (VORBIS)'
+}
+
 
 class YASE_UI():
     def __init__(self):
-        self.LIST_VALUES = ['OPUS', 'OGG VORBIS', 'AAC (M4A/MP4)']
         self.LAYOUT = [
             [
                 gui.Text(
@@ -57,9 +62,9 @@ class YASE_UI():
                 )
             ],
             [
-                gui.Combo(
-                    default_value=self.LIST_VALUES[0],
-                    values=self.LIST_VALUES,
+                gui.OptionMenu(
+                    values=list(AUDIO_FORMATS.values()),
+                    default_value=AUDIO_FORMATS[140],
                     key=ELEMENTS['formSelect'],
                     visible=False
                 )
@@ -120,7 +125,8 @@ class YASE_UI():
                     )
                     self.window[ELEMENTS['formSelect']].update(
                         visible=True,
-                        values=self.LIST_VALUES
+                        values=list(AUDIO_FORMATS.values()),
+                        default_value=AUDIO_FORMATS[140],
                     )
                     self.window[ELEMENTS['statusBar']].update(
                         value=VERSION
