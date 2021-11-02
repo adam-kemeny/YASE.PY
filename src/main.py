@@ -66,7 +66,7 @@ class YASE_UI():
                     values=list(AUDIO_FORMATS.values()),
                     default_value=AUDIO_FORMATS[140],
                     key=ELEMENTS['formSelect'],
-                    visible=False
+                    visible=True
                 )
             ],
             [
@@ -109,22 +109,24 @@ class YASE_UI():
                 )
                 # youtube-dl data fetch
                 try:
+                    selectedFormatCode = str(list({  # Make this purrty
+                        val for val in AUDIO_FORMATS if AUDIO_FORMATS[val] == value[ELEMENTS['formSelect']]
+                    })[0])
                     result = youtube_dl.YoutubeDL({
-                        # 'format': 'bestaudio/best',
-                        # 'format': '251',
-                        'simulate': True,
-                        'listformats': True,
+                        'format': selectedFormatCode,
+                        # 'simulate': True,
+                        # 'listformats': True,
                     }).extract_info(
                         value[ELEMENTS['formInput']]
                     )
-                    self.window[ELEMENTS['formSelect']].update(
-                        visible=True,
-                        values=list(AUDIO_FORMATS.values()),
-                        default_value=AUDIO_FORMATS[140],
-                    )
-                    self.window[ELEMENTS['statusBar']].update(
-                        value=VERSION
-                    )
+                    # self.window[ELEMENTS['statusBar']].update(
+                    #     value=VERSION
+                    # )
+                    # self.window[ELEMENTS['formSelect']].update(
+                    #     visible=True,
+                    #     values=list(AUDIO_FORMATS.values()),
+                    #     default_value=AUDIO_FORMATS[140],
+                    # )
                 except:
                     self.window[ELEMENTS['statusBar']].update(
                         value=TRANSLATIONS['error'],
